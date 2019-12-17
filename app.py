@@ -21,7 +21,7 @@ def transcribir():
     print(archivo)
     filename=secure_filename(archivo.filename)
     print(filename)
-    destination="/".join([target, os.path.splitext(filename)[0]+'.wav'])
+    destination="/".join([target, os.path.splitext(filename)[0]])
     archivo.save(destination)
     string = makeTrans(archivo)
     print(string)
