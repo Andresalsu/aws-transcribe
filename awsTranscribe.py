@@ -28,14 +28,14 @@ def makeTrans(job_uri):
 
     S3 = boto3.client('s3')
 
-    SOURCE_FILENAME = job_uri.filename+'.wav'
+    SOURCE_FILENAME = job_uri.filename
     BUCKET_NAME = 'speech-to-text-edi'
     S3.upload_file(SOURCE_FILENAME, BUCKET_NAME, SOURCE_FILENAME)
 
     transcribe = boto3.client('transcribe')
     transcribe.start_transcription_job(
         TranscriptionJobName=job_name,
-        Media={'MediaFileUri': "s3://speech-to-text-edi/"+str(os.path.basename(job_uri.filename)+'.wav')},
+        Media={'MediaFileUri': "s3://speech-to-text-edi/"+str(os.path.basename(job_uri.filename))},
         MediaFormat='wav',
         LanguageCode='es-ES'
 
