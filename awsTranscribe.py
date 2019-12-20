@@ -22,17 +22,21 @@ import urllib
 import ssl
 import os
 
-job_name = "jobname"+str(datetime.datetime.now()).replace(' ','_').replace(':','-')
-
 def makeTrans(job_uri):
 
+    #Se inicia el servicio de AWS con Boto3 para el almacenamiento del audio en un bucket de S3
     S3 = boto3.client('s3')
+    job_name = "jobname-"+str(datetime.datetime.now()).replace(' ','_').replace(':','-')
+    print(job_name)
 
+    #Se almacena el archivo en el bucket
     SOURCE_FILENAME = job_uri.filename
     BUCKET_NAME = 'speech-to-text-edi'
     S3.upload_file(SOURCE_FILENAME, BUCKET_NAME, SOURCE_FILENAME)
 
+    #Se inicia el servicio de AWS con Boto3 para la transcripcion del audio
     transcribe = boto3.client('transcribe')
+    #Se referencia el nombre del Job para la transcripcion, la ubicacion del audio, el tipo de archivo y el lenguaje 
     transcribe.start_transcription_job(
         TranscriptionJobName=job_name,
         Media={'MediaFileUri': "s3://speech-to-text-edi/"+str(os.path.basename(job_uri.filename))},
@@ -41,6 +45,7 @@ def makeTrans(job_uri):
 
     )
 
+    #Mientras se transcribe el audio se espera un tiempo para la transcripcion
     while True:
         status = transcribe.get_transcription_job(TranscriptionJobName=job_name)
         if status['TranscriptionJob']['TranscriptionJobStatus'] in ['COMPLETED', 'FAILED']:
@@ -48,6 +53,7 @@ def makeTrans(job_uri):
         print("Not ready yet...")
         time.sleep(5)
 
+    #Finalmente, se recibe una URL con un JSON que contiene el resultado. Del JSON se extrae el texto detectado y se retorna
     url = status['TranscriptionJob']['Transcript']['TranscriptFileUri']
     req = urllib.request.Request(url)
     gcontext = ssl.SSLContext()
