@@ -1,0 +1,11 @@
+Informacion del script:
+
+-App.py: Script que ejecuta el servidor Flask para exponer el servicio de transcripcion. El metodo de
+transcribir() recibe el archivo de audio en formato WAV y lo almacena localmente para poder ser transcrito
+usando los servicios de AWS. Luego se retorna la primera palabra encontrada en el audio usando la libreria
+Jsonify y la libreria Unidecode para eliminar caracteres especiales y "ñ".
+
+-awsTranscribe.py: Script que contiene el funcionamiento principal del script. Se conecta con el servicio 
+de AWS Transcribe usando la libreria boto3. Se crea un jobtranscribe para el audio recibido y se almacena
+en un bucket de S3 para ser enviado al job creado. Una vez transcrito el audio, se codifica usando la libreria
+Unidecode para eliminar caracteres extraños y "ñ" para ser devuelto.
