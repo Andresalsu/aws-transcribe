@@ -1,5 +1,5 @@
 boto3==1.9.250
-Flask_Cors==3.0.8
+Flask_Cors==3.0.9
 Werkzeug==0.15.4
 Unidecode==1.1.1
 Flask==1.1.1
